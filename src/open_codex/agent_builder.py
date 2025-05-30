@@ -1,6 +1,11 @@
 from importlib.resources import files
-
+import os
 from open_codex.interfaces.llm_agent import LLMAgent
+
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path=files("open_codex.resources") \
+            .joinpath(".env"))
 
 class AgentBuilder:
     
@@ -9,7 +14,7 @@ class AgentBuilder:
         return files("open_codex.resources") \
             .joinpath("prompt.txt") \
             .read_text(encoding="utf-8")
-
+# plan to join the custom_prompt.txt to the system_prompt
     @staticmethod
     def get_phi_agent() -> LLMAgent:
         from open_codex.agents.phi_4_mini_agent import Phi4MiniAgent
@@ -23,7 +28,15 @@ class AgentBuilder:
         return OllamaAgent(system_prompt=system_prompt, 
                            model_name=model,
                            host=host)
-
+    
+    @staticmethod
+    def get_litellm_agent() -> LLMAgent:
+        from open_codex.agents.litellm_agent import LiteLLMAgent
+        system_prompt = AgentBuilder.get_system_prompt()
+        return LiteLLMAgent(system_prompt=system_prompt, 
+                            model_name=os.environ['MODEL_NAME'],
+                            api_base=os.environ['API_BASE'],
+                            api_key=os.environ['API_KEY'])
     @staticmethod
     def read_file(file_path: str) -> str:
         with open(file_path, 'r') as file:
