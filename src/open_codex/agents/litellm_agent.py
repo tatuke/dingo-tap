@@ -25,7 +25,7 @@ class LiteLLMAgent(LLMAgent):
         
         Args:
             system_prompt: The system prompt to use for generating responses
-            model_name: The name of the model to use
+            model_name: The name of the model to use,usually you might need to add the prefix like "ollama/gpt6-community-version" as the model name
             api_base: The base URL of the LiteLLM API
             api_key: The API key for authentication (optional)
             temperature: The temperature to use for generation (default: 0.2)
@@ -41,13 +41,7 @@ class LiteLLMAgent(LLMAgent):
     def _check_litellm_available(self) -> None:
         """Check if LiteLLM server is available and the model exists."""
         try:
-            # 这里假设 litellm 有类似 list_models 的方法，若无可省略
-            # models = litellm.list_models(api_base=self.api_base, api_key=self.api_key)
-            # available_models = [model['id'] for model in models]
-            # if self.model_name not in available_models:
-            #     logger.error(f"Model '{self.model_name}' not found in LiteLLM. Available models: {', '.join(available_models)}")
-            #     raise ValueError(f"Model '{self.model_name}' not found in LiteLLM.")
-            pass  # LiteLLM 可能没有模型列表接口，可省略此检查
+            pass  
         except Exception as e:
             logger.error(f"Could not connect to LiteLLM server at {self.api_base}.")
             raise ConnectionError(f"Could not connect to LiteLLM server at {self.api_base}: {str(e)}")

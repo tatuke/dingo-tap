@@ -62,9 +62,12 @@ def get_agent(args: argparse.Namespace) -> LLMAgent:
         print(f"{BLUE}Using Ollama with model: {model}{RESET}")
         return AgentBuilder.get_ollama_agent(model=model, host=args.ollama_host)        
     else:
-        print(f"{BLUE}Using model: phi-4-mini-instruct{RESET}")
-        return AgentBuilder.get_phi_agent()
-
+        # print(f"{BLUE}Using model: phi-4-mini-instruct{RESET}")
+        # return AgentBuilder.get_phi_agent()
+    # using litellm as default
+        print(f"{BLUE}Using model: litellm{RESET}")
+        return AgentBuilder.get_litellm_agent()
+    
 def run_one_shot(agent: LLMAgent, user_prompt: str) -> str:   
     try:
         return agent.one_shot_mode(user_prompt)
