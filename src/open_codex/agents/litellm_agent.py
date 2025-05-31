@@ -19,7 +19,8 @@ class LiteLLMAgent(LLMAgent):
                  api_base: str,
                  api_key: str = None,
                  temperature: float = 0.2,
-                 max_tokens: int = 500):
+                 max_tokens: int = 500,
+                 extra_body: dict = {}):
         """
         Initialize the LiteLLM agent.
         
@@ -30,6 +31,7 @@ class LiteLLMAgent(LLMAgent):
             api_key: The API key for authentication (optional)
             temperature: The temperature to use for generation (default: 0.2)
             max_tokens: The maximum number of tokens to generate (default: 500)
+            extra_body: The extra body to use for generation (default: {})
         """
         self.system_prompt = system_prompt
         self.model_name = model_name
@@ -37,6 +39,7 @@ class LiteLLMAgent(LLMAgent):
         self.api_key = api_key
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.extra_body = extra_body
 
     def _check_litellm_available(self) -> None:
         """Check if LiteLLM server is available and the model exists."""
@@ -81,7 +84,8 @@ class LiteLLMAgent(LLMAgent):
                 api_base=self.api_base,
                 api_key=self.api_key,
                 temperature=self.temperature,
-                max_tokens=self.max_tokens
+                max_tokens=self.max_tokens,
+                **self.extra_body
             )
             if "choices" in response and response["choices"]:
                 return response["choices"][0]["message"]["content"]

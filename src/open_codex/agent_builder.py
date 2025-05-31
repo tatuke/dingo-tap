@@ -36,7 +36,9 @@ class AgentBuilder:
         return LiteLLMAgent(system_prompt=system_prompt, 
                             model_name=os.environ['MODEL_NAME'],
                             api_base=os.environ['API_BASE'],
-                            api_key=os.environ['API_KEY'])
+                            api_key=os.environ['API_KEY'],
+                            extra_body=os.environ['EXTRA_BODY'])
+    
     @staticmethod
     def read_file(file_path: str) -> str:
         with open(file_path, 'r') as file:
