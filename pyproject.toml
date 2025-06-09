@@ -29,4 +29,4 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-"open_codex" = ["resources/*.txt"]
+"open_codex" = ["resources/*.txt", "resources/.env"]

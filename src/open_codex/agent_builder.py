@@ -2,13 +2,6 @@ from importlib.resources import files
 import os
 from open_codex.interfaces.llm_agent import LLMAgent
 
-from dotenv import load_dotenv
-
-# file path
-script_dir = os.path.dirname(os.path.abspath(__file__))
-dotenv_path = os.path.join(script_dir, "resources", ".env")
-
-load_dotenv(dotenv_path=dotenv_path)
 
 class AgentBuilder:
     

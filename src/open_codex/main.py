@@ -1,7 +1,9 @@
 import sys
 import argparse
 import subprocess
-
+import os
+from dotenv import load_dotenv
+from importlib.resources import files
 from open_codex.agent_builder import AgentBuilder
 from open_codex.interfaces.llm_agent import LLMAgent
 
@@ -12,7 +14,11 @@ RESET = "\033[0m"
 
 # Capture single keypress (terminal) from the user
 # and returns it as a string. It works on both Windows and Unix systems.
-
+# and before that let's introduce some key words
+def load_env():
+    resources_dir = files("open_codex").joinpath("resources")
+    dotenv_path = os.path.join(resources_dir, ".env")
+    load_dotenv(dotenv_path=dotenv_path)
 # Windows
 if sys.platform == "win32":
     import msvcrt
@@ -106,6 +112,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main():
+    load_env()
+    
     args = parse_args()
     agent = get_agent(args)
 
