@@ -63,16 +63,28 @@ def print_response(command: str):
     print(f"{RESET}")
 
 def get_agent(args: argparse.Namespace) -> LLMAgent:
-    model: str = args.model
+        # read ollama model from env
+    config_model = os.getenv("OLLAMA_MODEL_NAME", "")
+    config_host = os.getenv("OLLAMA_HOST", "")
+    
+    # or user_input
+    model = args.model if args.model != "" else config_model
+    host = args.ollama_host if args.ollama_host != "" else config_host
+    
     if args.ollama:
         print(f"{BLUE}Using Ollama with model: {model}{RESET}")
-        return AgentBuilder.get_ollama_agent(model=model, host=args.ollama_host)        
+        return AgentBuilder.get_ollama_agent(model=model, host=host)        
     else:
         # print(f"{BLUE}Using model: phi-4-mini-instruct{RESET}")
         # return AgentBuilder.get_phi_agent()
     # using litellm as default
         print(f"{BLUE}Using model: litellm{RESET}")
         return AgentBuilder.get_litellm_agent()
+
+# regx and add user pre-set condition from custom_prompt.txt when get user_prompt
+
+# def get_user_condition():
+#     return os.environ['USER_CONDITION']
     
 def run_one_shot(agent: LLMAgent, user_prompt: str) -> str:   
     try:
@@ -104,10 +116,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model", type=str, 
                         help="Model name to use (default: phi4-mini)", default="phi4-mini:latest")
     parser.add_argument("--ollama", action="store_true", 
-                        help="Use Ollama for LLM inference, use --model to specify the model")
+                        help="Use Ollama for LLM inference, use --model to specify the model" \
+                        "if left empty, the config value is used.")
     parser.add_argument("--ollama-host", type=str, default="http://localhost:11434", 
                         help="Configure the host for the Ollama API. " \
-                        "If left empty, the default http://localhost:11434 is used.")
+                        "If left empty, the config value is used.")
 
     return parser.parse_args()
 

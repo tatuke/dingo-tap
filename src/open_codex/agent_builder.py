@@ -18,12 +18,12 @@ class AgentBuilder:
     #     return Phi4MiniAgent(system_prompt=system_prompt)
     
     @staticmethod
-    def get_ollama_agent() -> LLMAgent:
+    def get_ollama_agent(model: str, host: str) -> LLMAgent:
         from open_codex.agents.ollama_agent import OllamaAgent
         system_prompt = AgentBuilder.get_system_prompt()
         return OllamaAgent(system_prompt=system_prompt, 
-                           model_name=os.environ['ollama_MODEL_NAME'],
-                           host=os.environ['ollama_HOST'])
+                           model_name=model,
+                           host=host)
 
     @staticmethod
     def get_litellm_agent() -> LLMAgent:
@@ -32,8 +32,7 @@ class AgentBuilder:
         return LiteLLMAgent(system_prompt=system_prompt, 
                             model_name=os.environ['MODEL_NAME'],
                             api_base=os.environ['API_BASE'],
-                            api_key=os.environ['API_KEY'],
-                            extra_body=os.environ['EXTRA_BODY'])
+                            api_key=os.environ['API_KEY'])
     # print(f"Script directory: {script_dir}")
     # print(f"Dotenv path: {dotenv_path}")
     # print(f"Model name: {os.environ['MODEL_NAME']}")
