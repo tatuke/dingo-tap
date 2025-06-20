@@ -88,7 +88,7 @@ Once installed, use the `open-codex` CLI globally.
 ---
 
 ## reinstall-xasdkljdas
-
+Reinstall if you change config value in .env (temporary <-=->)
 ```bash
 cd root-path/to/dingo-tap/
 rm -rf build dist open_codex.egg-info
