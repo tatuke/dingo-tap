@@ -87,6 +87,17 @@ Once installed, use the `open-codex` CLI globally.
 
 ---
 
+## reinstall-xasdkljdas
+Reinstall if you change config value in .env (temporary <-=->)
+```bash
+cd root-path/to/dingo-tap/
+rm -rf build dist open_codex.egg-info
+pip install build
+python -m build
+# You might see version after build
+pip install --force-reinstall dist/open_codex-<opencodex-version>-py3-none-any.whl
+```
+
 ## 🚀 Usage Examples
 
 ### ▶️ One-shot mode
