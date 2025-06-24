@@ -2,6 +2,7 @@ import sys
 import argparse
 import subprocess
 import os
+import platform
 from dotenv import load_dotenv
 from importlib.resources import files
 from open_codex.agent_builder import AgentBuilder
@@ -36,6 +37,20 @@ else:
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return key
+    
+# sys details
+def get_system_info():
+    system = platform.system()
+    release = platform.release()
+    version = platform.version()
+    info = f"OSsystem: {system} {release} {version}"
+    if system == "Linux":
+        try:
+            import distro
+            info += f"\nDistribution: {distro.name(pretty=True)}"
+        except ImportError:
+            pass
+    return info
 
 def get_user_action():
     print(f"{BLUE}What do you want to do with this command?{RESET}")
@@ -86,9 +101,10 @@ def get_agent(args: argparse.Namespace) -> LLMAgent:
 # def get_user_condition():
 #     return os.environ['USER_CONDITION']
     
-def run_one_shot(agent: LLMAgent, user_prompt: str) -> str:   
+def run_one_shot(agent: LLMAgent, user_prompt: str, system_info: str) -> str:
+    full_prompt = f"{user_prompt}\n\nSystem info: {system_info}"    
     try:
-        return agent.one_shot_mode(user_prompt)
+        return agent.one_shot_mode(full_prompt)
     except ConnectionError:
         print(f"{RED}Could not connect to Model.{RESET}", file=sys.stderr)
         sys.exit(1)
@@ -114,11 +130,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("prompt", nargs="+", 
                         help="Natural language prompt")
     parser.add_argument("--model", type=str, 
-                        help="Model name to use (default: phi4-mini)", default="phi4-mini:latest")
+                        help="Model name to use (default: phi4-mini)", default="")
     parser.add_argument("--ollama", action="store_true", 
                         help="Use Ollama for LLM inference, use --model to specify the model" \
                         "if left empty, the config value is used.")
-    parser.add_argument("--ollama-host", type=str, default="http://localhost:11434", 
+    parser.add_argument("--ollama-host", type=str, default="", 
                         help="Configure the host for the Ollama API. " \
                         "If left empty, the config value is used.")
 
@@ -131,8 +147,9 @@ def main():
     agent = get_agent(args)
 
     # join the prompt arguments into a single string
-    prompt = " ".join(args.prompt).strip() 
-    response = run_one_shot(agent, prompt)
+    prompt = " ".join(args.prompt).strip()
+    system_info = get_system_info() 
+    response = run_one_shot(agent, prompt, system_info)
     print_response(response)
     action = get_user_action()
     run_user_action(action, response)
