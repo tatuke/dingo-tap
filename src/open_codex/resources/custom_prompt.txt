@@ -10,6 +10,6 @@
   -  like:
     -  mainly install components on /data/ directory
     -  mainly put some download files on /data/download/ directory
-    -  ...
+    -  when need to generate password.always using random character and 15-character string. 
 -  though use natural language, but you should also pay attention to the path and the format of the data and keep your description concise and clear.
 -  so that you or other people can understand and maintain your description easily.

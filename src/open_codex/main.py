@@ -17,9 +17,15 @@ RESET = "\033[0m"
 # and returns it as a string. It works on both Windows and Unix systems.
 # and before that let's introduce some key words
 def load_env():
-    resources_dir = files("open_codex").joinpath("resources")
-    dotenv_path = os.path.join(resources_dir, ".env")
-    load_dotenv(dotenv_path=dotenv_path)
+    if os.path.exists(".env"):
+        load_dotenv(".env")
+        return True
+    else:
+        return False
+    # resources_dir = files("open_codex").joinpath("resources")
+    # dotenv_path = os.path.join(resources_dir, ".env")
+    # load_dotenv(dotenv_path=dotenv_path)
+
 # Windows
 if sys.platform == "win32":
     import msvcrt
@@ -78,11 +84,13 @@ def print_response(command: str):
     print(f"{RESET}")
 
 def get_agent(args: argparse.Namespace) -> LLMAgent:
-        # read ollama model from env
+    env_loaded = load_env()
+    if not env_loaded:
+        print(f"{RED}No .env file found. check ../src/open-codex/.env exists.{RESET}")
+
     config_model = os.getenv("OLLAMA_MODEL_NAME", "")
     config_host = os.getenv("OLLAMA_HOST", "")
     
-    # or user_input
     model = args.model if args.model != "" else config_model
     host = args.ollama_host if args.ollama_host != "" else config_host
     
@@ -96,10 +104,10 @@ def get_agent(args: argparse.Namespace) -> LLMAgent:
         print(f"{BLUE}Using model: litellm{RESET}")
         return AgentBuilder.get_litellm_agent()
 
-# regx and add user pre-set condition from custom_prompt.txt when get user_prompt
+# regx and add user pre-set condition from custom_prompt.txt when get user_input
+# def regx_custom_condition(args: argparse.Namespace) -> LLMAgent:
 
-# def get_user_condition():
-#     return os.environ['USER_CONDITION']
+# kind of diffcult... I'll verify its feasibility in a new project before submitting improvements here. prompt compress hah..20250701
     
 def run_one_shot(agent: LLMAgent, user_prompt: str, system_info: str) -> str:
     full_prompt = f"{user_prompt}\n\nSystem info: {system_info}"    
@@ -141,8 +149,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main():
-    load_env()
-    
     args = parse_args()
     agent = get_agent(args)
 
