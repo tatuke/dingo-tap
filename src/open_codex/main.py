@@ -25,6 +25,11 @@ def load_env():
     # resources_dir = files("open_codex").joinpath("resources")
     # dotenv_path = os.path.join(resources_dir, ".env")
     # load_dotenv(dotenv_path=dotenv_path)
+def load_custom_prompt():
+    custom_prompt = files("open_codex").joinpath("custom_prompt.txt").read_text(encoding="utf-8")
+    return custom_prompt
+
+    
 
 # Windows
 if sys.platform == "win32":
@@ -109,8 +114,8 @@ def get_agent(args: argparse.Namespace) -> LLMAgent:
 
 # kind of diffcult... I'll verify its feasibility in a new project before submitting improvements here. prompt compress hah..20250701
     
-def run_one_shot(agent: LLMAgent, user_prompt: str, system_info: str) -> str:
-    full_prompt = f"{user_prompt}\n\nSystem info: {system_info}"    
+def run_one_shot(agent: LLMAgent, user_prompt: str, custom_prompt: str, system_info: str) -> str:
+    full_prompt = f"{user_prompt}\n\nSystem info: {system_info}\n\nOther conditions:{custom_prompt}"    
     try:
         return agent.one_shot_mode(full_prompt)
     except ConnectionError:
@@ -155,7 +160,8 @@ def main():
     # join the prompt arguments into a single string
     prompt = " ".join(args.prompt).strip()
     system_info = get_system_info() 
-    response = run_one_shot(agent, prompt, system_info)
+    custom_prompt = load_custom_prompt()
+    response = run_one_shot(agent, prompt, custom_prompt, system_info)
     print_response(response)
     action = get_user_action()
     run_user_action(action, response)
