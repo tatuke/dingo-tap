@@ -22,12 +22,12 @@ def load_env():
         return True
     else:
         return False
-    # resources_dir = files("open_codex").joinpath("resources")
-    # dotenv_path = os.path.join(resources_dir, ".env")
-    # load_dotenv(dotenv_path=dotenv_path)
-def load_custom_prompt():
-    custom_prompt = files("open_codex").joinpath("custom_prompt.txt").read_text(encoding="utf-8")
-    return custom_prompt
+
+def load_custom_prompt() -> str:
+    if os.path.exists("custom_prompt.txt"):
+        return open("custom_prompt.txt", "r").read()
+    else:
+        return ""
 
     
 
@@ -109,11 +109,6 @@ def get_agent(args: argparse.Namespace) -> LLMAgent:
         print(f"{BLUE}Using model: litellm{RESET}")
         return AgentBuilder.get_litellm_agent()
 
-# regx and add user pre-set condition from custom_prompt.txt when get user_input
-# def regx_custom_condition(args: argparse.Namespace) -> LLMAgent:
-
-# kind of diffcult... I'll verify its feasibility in a new project before submitting improvements here. prompt compress hah..20250701
-    
 def run_one_shot(agent: LLMAgent, user_prompt: str, custom_prompt: str, system_info: str) -> str:
     full_prompt = f"{user_prompt}\n\nSystem info: {system_info}\n\nOther conditions:{custom_prompt}"    
     try:
